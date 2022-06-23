@@ -3,10 +3,14 @@
     margin:0;
     box-sizing: border-box;
 }
-
-body{
-    background-color:blanchedalmond;
+*{
+    -webkit-user-select: none;
+    /* Chrome/Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
 }
+
 .main{
     display: flex;
     flex-direction: column;
@@ -16,20 +20,112 @@ body{
     height:100vh;
 }
 
+.startScreen{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width:100vw;
+    height:100vh;
+    position: absolute;
+    z-index: 999;
+    background-color: bisque;
+}
+
+.startScreenTitle{
+    font-size:4rem;
+}
+
+.gameSelection button{
+    margin:0 12px 0 12px;
+}
+
 .gameWindow{
     margin-top:32px;
     height:600px;
     width:600px;
-    background-color: blue;
-
+    position:relative;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
+    gap: 2px;
 }
 
-.gameSquares{
-    height:200px;
-    width:200px;
-    background-color: red;
-    border: 1px solid #000;
+.gameSquares, .gameSelectionSquares{
+    font-size: 3em;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: cyan;
+}
+
+
+
+.squareBorders{
+    border-bottom: 1px solid #000;
+    border-right: 1px solid #000;
+}
+
+.btn{
+    margin-top:20px;
+    width:150px;
+    height:40px;
+    font-size:1.4rem;
+    border:none;
+    border-radius:4px;
+    background-color: #78C0E0;
+}
+
+.btn:hover{
+    cursor:pointer;
+    transform: scale(1.02);
+}
+
+.btn:active{
+    transform:scale(0.99);
+}
+
+.hidden {
+    caret-color: transparent;
+}
+
+.winnerBanner{
+    position:absolute;
+    display:none;
+    width:50%;
+    height:250px;
+    justify-content: center;
+    align-items: center;
+    top:30%;
+    left:25%;
+    font-size: 3em;
+    border-radius: 5px;
+    box-shadow: 5px 6px 10px black;
+    background-color: bisque;
+}
+
+.playerDisplay{
+    margin-top:40px;
+    width:600px;
+    height:auto;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+}
+
+.playerSquare{
+    height:120px;
+    width:120px;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size:3rem;
+    border-radius:3px;
+    border:1px solid grey;
+}
+
+.activeSquare{
+    background-color: green;
 }
