@@ -44,19 +44,27 @@ const GameController = (() => {
     let playerSquare1 = document.querySelector('.player1');
     let playerSquare2 = document.querySelector('.player2');
     let startScreen = document.querySelector('.startScreen');
+    let howToGuide = document.querySelector('.modal-outer');
     let pvpBtn = document.querySelector('.PvPbtn');
     let pvaiBtn = document.querySelector('.PvAIbtn');
+    let howToGuideBtn = document.querySelector('.howToIcon');
+    let modalCloseBtn = document.getElementById('modalCloseBtn');
     let haveWinner = false;
+    var gameMode = "";
     //Default active player is player1 || X character
     let activePlayer = player1;
+    let aiPlayer;
     _Squares.forEach((element, index) => {
         element.addEventListener('click', (e) => {
-            
-            _checkIfFree(element, index);
+
+            _placeSign(element, index, activePlayer);
+            _checkGameMode();
             _declareDraw();
+           
             // element.style.pointerEvents = "none";
         })
     });
+
     //Swap player function
     const _swapPlayer = () => {
         if (activePlayer === player1) {
@@ -70,30 +78,67 @@ const GameController = (() => {
         }
     };
 
-
-    const _placeSign = (element, index) => {
+const _checkGameMode = () =>{
+    if (gameMode === "PvP") {
+        
+    }
+    else if(gameMode === "PvAI"){
+        //dont swap player.
+        aiPlayer = player2;
+        _aiMove();
+        console.log("PvAI is selected so do nothing");
+    }
+}
+    const _placeSign = (element, index, chosenPlayer) => {
+       
         GameBoard.emptySpots--;
+        let isSquareEmpty = _checkIfFree(element,index);
 
-        element.innerHTML = activePlayer.sign;
-        GameBoard.gameBoard[index] = activePlayer.sign;
-        if (activePlayer === player1) {
-           // console.log(player1.sign);
-
-        } else if (activePlayer === player2) {
-            //console.log(player2.sign);
+        if(isSquareEmpty === true){
+            console.log("Square is empty");
+            element.innerHTML = chosenPlayer.sign;
+            GameBoard.gameBoard[index] = chosenPlayer.sign;
+            _checkWin();
+            _swapPlayer();
         }
+
+        else if( isSquareEmpty === false){
+            //Square is already filled so places nothing
+            console.log("Square is not empty");
+        }
+
     };
 
     const _checkIfFree = (element, index) => {
         //Checks if the spot in the board is free and if it is, places activePlayers sign then swaps player
         if (element.innerHTML === "" || GameBoard.gameBoard[index] === "") {
            // console.log("empty");
-            _placeSign(element, index);
-            _checkWin();
-            _swapPlayer();
-        } else console.log("not empty so do nothing");
+            return true;
+            // if(gameMode == "PvP"){
+            //     _swapPlayer();
+            // }
+            // else if(gameMode == "PvAI"){
+            //     //AI makes its moves
+            //     console.log("AI places Sign");
+            //     _aiMove();
+            // }
+
+        } else return false;
     }
 
+    const _aiMove = () =>{
+        let move = Math.floor((Math.random() * 8) + 1);
+        console.log("ai move is run");
+        let isSquareEmpty = _checkIfFree(_Squares[move],move);
+        _declareDraw();
+        if(isSquareEmpty === true){
+            _placeSign(_Squares[move],move,aiPlayer)
+        }
+        else if(isSquareEmpty === false && GameBoard.emptySpots >0){
+            _aiMove();
+        };
+        
+    }
     //function that checks if a player has won
     const _checkWin = () => {
         //Compare the positions in gameBoard array to winConditions array and see if there are activePlayers signs 3 in a row.
@@ -127,6 +172,7 @@ const GameController = (() => {
         });
         playerSquare1.classList.add('activeSquare');
         playerSquare2.classList.remove('activeSquare');
+        
     }
 
     const _displayWinnerMessage = () =>{
@@ -141,12 +187,35 @@ const GameController = (() => {
         winnerMsgModal.innerHTML = ``;
     }
 
+    const _selectPvP = () =>{
+        startScreen.style.display = "none";
+        gameMode = "PvP";
+        console.log(gameMode);
+    }
+
+    const _selectPvAI = () =>{
+        startScreen.style.display = "none";
+        console.log(gameMode);
+        gameMode = "PvAI";
+    }
+  
     restartBtn.addEventListener('click',restartGame);
-    pvpBtn.addEventListener('click', () =>{
-        startScreen.style.display = "none";
+
+    howToGuideBtn.addEventListener('click', () =>{
+        howToGuide.style.display = "flex";
+ 
     });
-    pvaiBtn.addEventListener('click', () =>{
-        startScreen.style.display = "none";
+
+    howToGuide.addEventListener('click', () =>{
+        howToGuide.style.display = "none";
     });
-    return {_displayWinnerMessage};
+
+    modalCloseBtn.addEventListener('click', () =>{
+        howToGuide.style.display = "none";
+    });
+
+    pvpBtn.addEventListener('click',_selectPvP);
+
+    pvaiBtn.addEventListener('click',_selectPvAI);
+    return {_displayWinnerMessage, _aiMove,_placeSign};
 })();
